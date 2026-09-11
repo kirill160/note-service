@@ -8,7 +8,6 @@ import org.example.noteservice.mapper.NoteMapperImpl;
 import org.example.noteservice.repository.NoteArchiveRepository;
 import org.example.noteservice.repository.NoteRepository;
 import org.example.noteservice.repository.NoteSearchRepository;
-import org.example.noteservice.repository.TagRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,8 +21,6 @@ public class NoteService {
     private final NoteArchiveRepository noteArchiveRepository;
     private final NoteSearchRepository noteSearchRepository;
     private final NoteMapperImpl noteMapperImpl;
-    pr
-    private final Logger logger = Logger.getLogger(NoteService.class.getName());
 
     @Autowired
     public NoteService(NoteRepository noteRepository,

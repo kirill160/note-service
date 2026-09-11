@@ -23,7 +23,12 @@ public class Note {
     private String title;
     @Column(name = "content", nullable = false, length = 1000)
     private String content;
-    @Column (nullable = false, name = "created_at")
+    @Column(
+            nullable = false,
+            name = "created_at",
+            insertable = false,
+            updatable = false
+    )
     private OffsetDateTime createdAt;
     @Column
     private boolean archive;
