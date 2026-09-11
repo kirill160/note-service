@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: Note service
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    show-sql:  true
+  datasource:
+    url: jdbc:postgresql://localhost:3000/notes
+    username: kirill
+    password: 12345
+server:
+  port: 8000

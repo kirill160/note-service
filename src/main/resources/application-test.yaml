@@ -1,0 +1,19 @@
+spring:
+  sql:
+    init:
+      mode: always
+  cache:
+    type: none
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        format_sql: true
+        jdbc:
+          batch_size: 20
+    show-sql: true
+
+  test:
+    database:
+      replace: none
