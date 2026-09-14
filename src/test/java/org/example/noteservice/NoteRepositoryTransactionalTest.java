@@ -44,7 +44,7 @@ public class NoteRepositoryTransactionalTest extends BaseRepositoryTest {
     }
 
     @Test
-    @Transactional  // Важно! Обеспечивает доступ к ленивым связям
+    @Transactional
     void findById_shouldLoadTagsLazily() {
         // Act
         Note found = noteRepository.findById(noteWithTags.getId()).get();

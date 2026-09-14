@@ -11,6 +11,7 @@ import org.example.noteservice.repository.NoteRepository;
 import org.example.noteservice.repository.NoteSearchRepository;
 import org.example.noteservice.repository.TagRepository;
 import org.example.noteservice.service.NoteService;
+import org.example.noteservice.service.TagService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -41,6 +42,10 @@ public class NoteServiceTest {
     private NoteMapperImpl noteMapper;
     @InjectMocks
     private NoteService noteService;
+    @Mock
+    private TagService tagService;
+
+
 
     private Note note;
     private NoteRequestDTO noteRequestDTO;

@@ -50,7 +50,7 @@ public class NoteRepositoryWithTagsTest extends BaseRepositoryTest {
                 .build();
 
         entityManager.persist(noteWithTags);
-        entityManager.flush(); // <-- ВАЖНО
+        entityManager.flush();
 
         // 2. Создаём Tags
         tag1 = Tag.builder()
