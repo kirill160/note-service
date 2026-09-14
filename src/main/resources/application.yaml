@@ -1,4 +1,7 @@
 spring:
+  config:
+    import:
+      import=optional:file:.env[.properties]
   application:
     name: Note service
   jpa:
@@ -9,8 +12,8 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
     show-sql:  true
   datasource:
-    url: jdbc:postgresql://localhost:3000/notes
-    username: kirill
-    password: 12345
+    url: ${DB_URL}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
 server:
   port: 8000
