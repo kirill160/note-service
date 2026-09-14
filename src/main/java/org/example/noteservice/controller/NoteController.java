@@ -1,4 +1,4 @@
-package org.example.noteservice.conroller;
+package org.example.noteservice.controller;
 
 import jakarta.validation.Valid;
 import org.example.noteservice.dto.NoteRequestDTO;
@@ -27,7 +27,6 @@ public class NoteController {
     }
 
     @GetMapping("/{id}")
-    @Cacheable(value="note", key="#id")
     public ResponseEntity<NoteResponseDTO> findById(@PathVariable Long id) {
         return ResponseEntity.status(HttpStatus.OK).body(service.findByIdDTO(id));
     }
@@ -39,34 +38,29 @@ public class NoteController {
     }
 
     @DeleteMapping("/{id}")
-    @CacheEvict(value = "note", key = "#id")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         service.deleteById(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @PatchMapping("/{id}")
-    @Caching(
-            put = { @CachePut(value = "note", key = "#id") },
-            evict = { @CacheEvict(value = "note", key = "#id") }
-    )
-    public ResponseEntity<NoteResponseDTO> updateSetArchiveAndSave(@PathVariable Long id, @RequestParam(required = false, name = "archive") boolean archive) {
-        return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body(service.saveAndSetArchiveNote(id, archive));
+    public ResponseEntity<NoteResponseDTO> updateArchiveStatus(@PathVariable Long id, @RequestParam(name = "archive") boolean archive) {
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(service.saveAndSetArchiveNote(id, archive));
     }
 
     @GetMapping("/archive")
     public ResponseEntity<List<NoteResponseDTO>> findByArchive(@RequestParam(required = false, name = "findArchive") boolean archive) {
-        return ResponseEntity.status(HttpStatus.OK).body(service.findNotesByArchive(archive));
+        return ResponseEntity.ok().body(service.findNotesByArchive(archive));
 
     }
 
     @GetMapping("/tags")
     public ResponseEntity<List<NoteResponseDTO>> getTags(@Valid @RequestParam(required = false, name = "nameTags") List<String> tags) {
-        return ResponseEntity.status(HttpStatus.OK).body(service.searchByTag(tags));
+        return ResponseEntity.ok().body(service.searchByTag(tags));
     }
 
     @GetMapping("/search")
     public ResponseEntity<List<NoteResponseDTO>> search(@Valid @RequestParam(required = false, name = "title") String title) {
-        return ResponseEntity.status(HttpStatus.OK).body(service.search(title));
+        return ResponseEntity.ok().body(service.search(title));
     }
 }
