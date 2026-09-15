@@ -4,9 +4,7 @@ package org.example.noteservice;
 
 
 import org.example.noteservice.entity.note.Note;
-import org.example.noteservice.repository.NoteArchiveRepository;
 import org.example.noteservice.repository.NoteRepository;
-import org.example.noteservice.repository.NoteSearchRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,12 +20,6 @@ public class NoteRepositoryTest extends BaseRepositoryTest {
 
     @Autowired
     private NoteRepository noteRepository;
-
-    @Autowired
-    private NoteArchiveRepository noteArchiveRepository;
-
-    @Autowired
-    private NoteSearchRepository noteSearchRepository;
 
     @Autowired
     private TestEntityManager entityManager;
@@ -241,7 +233,7 @@ public class NoteRepositoryTest extends BaseRepositoryTest {
     @Test
     void findByArchive_shouldReturnArchivedNotes() {
 
-        List<Note> archivedNotes = noteArchiveRepository.getNotesByArchive(true);
+        List<Note> archivedNotes = noteRepository.getNotesByArchive(true);
 
 
         assertThat(archivedNotes).hasSize(1);
@@ -252,7 +244,7 @@ public class NoteRepositoryTest extends BaseRepositoryTest {
     @Test
     void findByArchive_shouldReturnActiveNotes() {
 
-        List<Note> activeNotes = noteArchiveRepository.getNotesByArchive(false);
+        List<Note> activeNotes = noteRepository.getNotesByArchive(false);
 
 
         assertThat(activeNotes).hasSize(2);
@@ -264,7 +256,7 @@ public class NoteRepositoryTest extends BaseRepositoryTest {
     @Test
     void searchByTitle_shouldReturnNotesWithMatchingTitle() {
 
-        List<Note> results = noteSearchRepository.findNotesByQuery("важн");
+        List<Note> results = noteRepository.findNotesByQuery("важн");
 
 
         assertThat(results).hasSize(1);
@@ -274,7 +266,7 @@ public class NoteRepositoryTest extends BaseRepositoryTest {
     @Test
     void searchByTitle_shouldReturnMultipleNotes_whenMultipleMatch() {
 
-        List<Note> results = noteSearchRepository.findNotesByQuery("Заметка");
+        List<Note> results = noteRepository.findNotesByQuery("Заметка");
 
 
         assertThat(results).hasSize(3);
@@ -285,7 +277,7 @@ public class NoteRepositoryTest extends BaseRepositoryTest {
     @Test
     void searchByTitle_shouldReturnEmptyList_whenNoMatch() {
 
-        List<Note> results = noteSearchRepository.findNotesByQuery("Несуществующее");
+        List<Note> results = noteRepository.findNotesByQuery("Несуществующее");
 
 
         assertThat(results).isEmpty();
@@ -294,7 +286,7 @@ public class NoteRepositoryTest extends BaseRepositoryTest {
     @Test
     void searchByTitle_shouldBeCaseInsensitive() {
 
-        List<Note> results = noteSearchRepository.findNotesByQuery("заметка");
+        List<Note> results = noteRepository.findNotesByQuery("заметка");
 
         assertThat(results).hasSize(3);
     }

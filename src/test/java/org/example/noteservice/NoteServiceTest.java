@@ -6,9 +6,7 @@ import org.example.noteservice.dto.TagDTO;
 import org.example.noteservice.entity.note.Note;
 import org.example.noteservice.handler.exception.NoteNotFoundException;
 import org.example.noteservice.mapper.NoteMapperImpl;
-import org.example.noteservice.repository.NoteArchiveRepository;
 import org.example.noteservice.repository.NoteRepository;
-import org.example.noteservice.repository.NoteSearchRepository;
 import org.example.noteservice.repository.TagRepository;
 import org.example.noteservice.service.NoteService;
 import org.example.noteservice.service.TagService;
@@ -30,10 +28,7 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class NoteServiceTest {
-    @Mock
-    private NoteArchiveRepository noteArchiveRepository;
-    @Mock
-    private NoteSearchRepository noteSearchRepository;
+
     @Mock
     private NoteRepository noteRepository;
     @Mock
@@ -141,29 +136,22 @@ public class NoteServiceTest {
 
     @Test
     void whenDeleteNoteById_thenReturnVoid() {
-        when(noteRepository.findById(anyLong())).thenReturn(Optional.of(note));
-        doNothing().when(noteRepository).delete(note);
+
+        doNothing().when(noteRepository).deleteById(1L);
         noteService.deleteById(1L);
 
-        verify(noteRepository, times(1)).delete(note);
-        verify(noteRepository, times(1)).findById(eq(1L));
+        verify(noteRepository, times(1)).deleteById(eq(1L));
 
-    }
 
-    @Test
-    void whenDeleteNoteByInvalidId_thenReturnNotFound() {
-        assertThrows(NoteNotFoundException.class, () -> noteService.deleteById(999L));
-        verify(noteRepository, never()).delete(note);
-        verify(noteRepository, times(1)).findById(anyLong());
     }
 
     @Test
     void whenFindNoteByIdAndSetArchived_thenReturnNote() {
         when(noteRepository.findById(1L)).thenReturn(Optional.of(note));
         when(noteMapper.toNoteResponseDTO(any(Note.class))).thenReturn(noteResponseDTO);
-        when(noteArchiveRepository.save(any(Note.class))).thenReturn(note);
+        when(noteRepository.save(any(Note.class))).thenReturn(note);
 
-        NoteResponseDTO noteResponseDTOTest = noteService.saveAndSetArchiveNote(1L, true);
+        NoteResponseDTO noteResponseDTOTest = noteService.updateArchiveStatus(1L, true);
         assertNotNull(noteResponseDTOTest);
         assertEquals(1L, noteResponseDTOTest.getId());
         assertEquals("Заголовок первой заметки", noteResponseDTOTest.getTitle());
@@ -172,7 +160,7 @@ public class NoteServiceTest {
 
         verify(noteMapper, times(1)).toNoteResponseDTO(any(Note.class));
         verify(noteRepository, times(1)).findById(1L);
-        verify(noteArchiveRepository, times(1)).save(any(Note.class));
+        verify(noteRepository, times(1)).save(any(Note.class));
     }
 
     @Test
@@ -203,17 +191,17 @@ public class NoteServiceTest {
 
 
         when(noteRepository.findById(1L)).thenReturn(Optional.of(noteForTest));
-        when(noteArchiveRepository.save(any(Note.class))).thenReturn(expectedNote);
+        when(noteRepository.save(any(Note.class))).thenReturn(expectedNote);
         when(noteMapper.toNoteResponseDTO(any(Note.class))).thenReturn(expectedDto);
 
-        NoteResponseDTO result = noteService.saveAndSetArchiveNote(1L, false);
+        NoteResponseDTO result = noteService.updateArchiveStatus(1L, false);
 
         assertNotNull(result);
         assertNotEquals(999L, result.getId());
         assertFalse(result.isArchived());
 
         verify(noteRepository, times(1)).findById(1L);
-        verify(noteArchiveRepository, times(1)).save(any(Note.class));
+        verify(noteRepository, times(1)).save(any(Note.class));
         verify(noteMapper, times(1)).toNoteResponseDTO(any(Note.class));
 
     }
@@ -231,7 +219,7 @@ public class NoteServiceTest {
         boolean archive = false;
         List<Note> notes = List.of(note);
 
-        when(noteArchiveRepository.getNotesByArchive(archive)).thenReturn(notes);
+        when(noteRepository.getNotesByArchive(archive)).thenReturn(notes);
         when(noteMapper.toNotesResponseDTO(notes)).thenReturn(List.of(expectedDto));
 
         List<NoteResponseDTO> result = noteService.findNotesByArchive(archive);
@@ -241,7 +229,7 @@ public class NoteServiceTest {
         assertEquals("Заголовок заметки поиска", result.get(0).getTitle());
         assertFalse(result.get(0).isArchived());
 
-        verify(noteArchiveRepository, times(1)).getNotesByArchive(archive);
+        verify(noteRepository, times(1)).getNotesByArchive(archive);
         verify(noteMapper, times(1)).toNotesResponseDTO(notes);
     }
 
@@ -258,7 +246,7 @@ public class NoteServiceTest {
         boolean archive = false;
         List<Note> notes = List.of(note);  // только note2 архивная
 
-        when(noteArchiveRepository.getNotesByArchive(archive)).thenReturn(notes);
+        when(noteRepository.getNotesByArchive(archive)).thenReturn(notes);
         when(noteMapper.toNotesResponseDTO(notes)).thenReturn(List.of(expectedDto));
 
         List<NoteResponseDTO> result = noteService.findNotesByArchive(archive);
@@ -268,7 +256,7 @@ public class NoteServiceTest {
         assertEquals("Заголовок заметки поиска", result.get(0).getTitle());
         assertTrue(result.get(0).isArchived());
 
-        verify(noteArchiveRepository, times(1)).getNotesByArchive(archive);
+        verify(noteRepository, times(1)).getNotesByArchive(archive);
         verify(noteMapper, times(1)).toNotesResponseDTO(notes);
     }
 
@@ -290,7 +278,7 @@ public class NoteServiceTest {
 
         List<NoteResponseDTO> expectedDtos = List.of(expectedDto);
 
-        when(noteSearchRepository.findNotesByTags(tags)).thenReturn(notes);
+        when(noteRepository.findNotesByTags(tags)).thenReturn(notes);
         when(noteMapper.toNotesResponseDTO(notes)).thenReturn(expectedDtos);
 
         List<NoteResponseDTO> result = noteService.searchByTag(tags);
@@ -300,7 +288,7 @@ public class NoteServiceTest {
         assertEquals("Java и Spring", result.get(0).getTitle());
         assertEquals(2, result.get(0).getTags().size());
 
-        verify(noteSearchRepository, times(1)).findNotesByTags(tags);
+        verify(noteRepository, times(1)).findNotesByTags(tags);
         verify(noteMapper, times(1)).toNotesResponseDTO(notes);
     }
 
@@ -308,7 +296,7 @@ public class NoteServiceTest {
     void whenSearchByTagsWithEmptyList_thenReturnEmptyList() {
         List<String> emptyTags = Collections.emptyList();
 
-        when(noteSearchRepository.findNotesByTags(emptyTags))
+        when(noteRepository.findNotesByTags(emptyTags))
                 .thenReturn(Collections.emptyList());
 
         when(noteMapper.toNotesResponseDTO(Collections.emptyList()))
@@ -319,7 +307,7 @@ public class NoteServiceTest {
         assertNotNull(result);
         assertTrue(result.isEmpty());
 
-        verify(noteSearchRepository, times(1)).findNotesByTags(emptyTags);
+        verify(noteRepository, times(1)).findNotesByTags(emptyTags);
         verify(noteMapper, times(1)).toNotesResponseDTO(Collections.emptyList());
     }
 
@@ -351,7 +339,7 @@ public class NoteServiceTest {
 
         List<NoteResponseDTO> expectedDtos = List.of(dto1, dto2);
 
-        when(noteSearchRepository.findNotesByQuery(query)).thenReturn(notes);
+        when(noteRepository.findNotesByQuery(query)).thenReturn(notes);
         when(noteMapper.toNotesResponseDTO(notes)).thenReturn(expectedDtos);
 
         List<NoteResponseDTO> result = noteService.search(query);
@@ -361,7 +349,7 @@ public class NoteServiceTest {
         assertEquals("PostgreSQL настройка", result.get(0).getTitle());
         assertEquals("Spring Boot поиск", result.get(1).getTitle());
 
-        verify(noteSearchRepository, times(1)).findNotesByQuery(query);
+        verify(noteRepository, times(1)).findNotesByQuery(query);
         verify(noteMapper, times(1)).toNotesResponseDTO(notes);
     }
 

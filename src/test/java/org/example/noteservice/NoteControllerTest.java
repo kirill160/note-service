@@ -1,7 +1,7 @@
 package org.example.noteservice;
 
 
-import org.example.noteservice.conroller.NoteController;
+import org.example.noteservice.controller.NoteController;
 
 import org.example.noteservice.dto.NoteRequestDTO;
 
@@ -146,12 +146,12 @@ public class NoteControllerTest {
 
         NoteResponseDTO expectedDto = new NoteResponseDTO(noteId, "Заголовок заметки", "Текст", true, List.of(new TagDTO("Тег1"), new TagDTO("Тег2")));
 
-        when(noteService.saveAndSetArchiveNote(noteId, archive)).thenReturn(expectedDto);
+        when(noteService.updateArchiveStatus(noteId, archive)).thenReturn(expectedDto);
 
         mockMvc.perform(patch("/api/note/{id}?archive=true", noteId).contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk()).andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(jsonPath("$.id").value(noteId)).andExpect(jsonPath("$.title").value("Заголовок заметки")).andExpect(jsonPath("$.text").value("Текст")).andExpect(jsonPath("$.archived").value(true)).andExpect(jsonPath("$.tags").isArray()).andExpect(jsonPath("$.tags.length()").value(2)).andExpect(jsonPath("$.tags[0].name").value("Тег1")).andExpect(jsonPath("$.tags[1].name").value("Тег2"));
 
 
-        verify(noteService, times(1)).saveAndSetArchiveNote(noteId, archive);
+        verify(noteService, times(1)).updateArchiveStatus(noteId, archive);
     }
 
     @Test
@@ -161,11 +161,11 @@ public class NoteControllerTest {
 
         NoteResponseDTO expectedDto = new NoteResponseDTO(noteId, "Заголовок заметки", "Текст", false, List.of(new TagDTO("Тег1"), new TagDTO("Тег2")));
 
-        when(noteService.saveAndSetArchiveNote(noteId, archive)).thenReturn(expectedDto);
+        when(noteService.updateArchiveStatus(noteId, archive)).thenReturn(expectedDto);
 
         mockMvc.perform(patch("/api/note/{id}?archive=false", noteId).contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk()).andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(jsonPath("$.id").value(noteId)).andExpect(jsonPath("$.archived").value(false));
 
-        verify(noteService, times(1)).saveAndSetArchiveNote(noteId, archive);
+        verify(noteService, times(1)).updateArchiveStatus(noteId, archive);
     }
 
     @Test

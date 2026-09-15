@@ -1,12 +1,8 @@
 package org.example.noteservice;
 
-
-
-
 import org.example.noteservice.entity.note.Note;
 import org.example.noteservice.entity.tag.Tag;
 import org.example.noteservice.repository.NoteRepository;
-import org.example.noteservice.repository.NoteSearchRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,9 +21,6 @@ public class NoteRepositoryWithTagsTest extends BaseRepositoryTest {
 
     @Autowired
     private NoteRepository noteRepository;
-
-    @Autowired
-    private NoteSearchRepository noteSearchRepository;
 
     @Autowired
     private TestEntityManager entityManager;
@@ -170,7 +163,7 @@ public class NoteRepositoryWithTagsTest extends BaseRepositoryTest {
     @Test
     void findByTagsName_shouldReturnNotesWithMatchingTag() {
         // Act
-        List<Note> results = noteSearchRepository.findNotesByTags(List.of("Важное"));
+        List<Note> results = noteRepository.findNotesByTags(List.of("Важное"));
 
         // Assert
         assertThat(results).hasSize(1);
@@ -180,7 +173,7 @@ public class NoteRepositoryWithTagsTest extends BaseRepositoryTest {
     @Test
     void findByTagsNameIn_shouldReturnNotesWithAnyMatchingTag() {
         // Act - ищем заметки с тегами "Важное" или "Личное"
-        List<Note> results = noteSearchRepository.findNotesByTags(
+        List<Note> results = noteRepository.findNotesByTags(
                 Arrays.asList("Важное", "Личное")
         );
 
@@ -192,7 +185,7 @@ public class NoteRepositoryWithTagsTest extends BaseRepositoryTest {
     @Test
     void findByTagsName_shouldReturnEmptyList_whenNoMatchingTag() {
         // Act
-        List<Note> results = noteSearchRepository.findNotesByTags(List.of("Несуществующий тег"));
+        List<Note> results = noteRepository.findNotesByTags(List.of("Несуществующий тег"));
 
         // Assert
         assertThat(results).isEmpty();
