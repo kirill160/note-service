@@ -15,6 +15,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@EqualsAndHashCode(exclude = {"tags", "id"} )
 public class Note {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
